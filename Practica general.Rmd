@@ -1,0 +1,150 @@
+---
+title: "Práctica General"
+author: "Rafael Moreno"
+date: "13/1/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Análisis comparativo de 3 especies de pingüino en la Antártida
+
+## 1.Carga de bibliotecas
+
+```{r}
+#install.packages("palmerpenguins")
+library(palmerpenguins)
+data(package = "palmerpenguins")
+
+#install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+## 2.Estudio de las variables
+```{r}
+names(penguins)
+names(penguins_raw)
+```
+
+
+## 3.Estadística descriptiva
+### 3.1. Sexo de los individuos por especie
+#### Total
+```{r}
+sex.sp <- penguins %>% 
+  select(species, sex)
+summary(sex.sp)
+```
+#### Por sexos
+```{r}
+table(penguins$species, penguins$sex)
+```
+
+
+### 3.2. Datos biométricos
+```{r}
+biom <- penguins %>% 
+  select (bill_length_mm, bill_depth_mm, flipper_length_mm, body_mass_g)
+summary(biom)
+
+
+long.pico <- penguins %>% 
+  summarise(media.long.pico = mean(bill_length_mm, na.rm = TRUE),
+            Sd.long.pico = sd(bill_length_mm, na.rm = TRUE),
+            min.long.pico = min(bill_length_mm, na.rm = TRUE),
+            max.long.pico = max(bill_length_mm, na.rm = TRUE)
+            )
+head(long.pico)
+
+prof.pico <- penguins %>% 
+  summarise(media.prof.pico = mean(bill_depth_mm, na.rm = TRUE),
+            Sd.prof.pico = sd(bill_depth_mm, na.rm = TRUE),
+            min.prof.pico = min(bill_depth_mm, na.rm = TRUE),
+            max.prof.pico = max(bill_depth_mm, na.rm = TRUE)
+            )
+head(prof.pico)
+
+long.aleta <- penguins %>% 
+  summarise(media.long.aleta = mean(flipper_length_mm, na.rm = TRUE),
+            Sd.long.aleta = sd(flipper_length_mm, na.rm = TRUE),
+            min.long.aleta = min(flipper_length_mm, na.rm = TRUE),
+            max.long.aleta = max(flipper_length_mm, na.rm = TRUE)
+            )
+head(long.aleta)
+
+tamaño <- penguins %>% 
+  summarise(media.tamaño = mean(body_mass_g, na.rm = TRUE),
+            Sd.tamaño = sd(body_mass_g, na.rm = TRUE),
+            min.tamaño = min(body_mass_g, na.rm = TRUE),
+            max.tamaño = max(body_mass_g, na.rm = TRUE)
+            )
+head(tamaño)
+```
+
+# 4.Variabilidad de especies por islas
+```{r}
+ggplot(data = penguins) +
+  geom_bar(aes(x = island, fill = species)) + 
+  labs(title = "Recuento de especies de pigüínos por islas", 
+       x = "Isla", y = "Número de individuos")
+```
+
+## 4.1.¿Qué especie se ha muestreado en las tres islas?
+```{r}
+table(penguins$species, penguins$island)
+```
+La especie Adelie se ha muestreado en las 3 islas
+
+## 4.2.¿Cuántos individuos se han muestreado de la isla Dream?
+```{r}
+table(penguins$island)
+```
+Se han muestreado un total de 124 individuos
+
+
+# 5.Tamaño de los pingüinos según sexo y especie
+```{r}
+ggplot(data = penguins) + 
+  geom_boxplot(aes(x = sex, y = body_mass_g, color = species)) + 
+  labs(title = "Tamaño de los pingüinos según sexo y especie", 
+       x = "Sexo", y = "Tamaño (IMC)")
+```
+
+
+## 5.1.¿Que especie tiene mayor tamaño?
+```{r}
+summ_especie <- penguins %>% 
+  group_by(species) %>% 
+  summarise(IMC.medio = mean(body_mass_g, na.rm = TRUE))
+summ_especie
+
+ggplot() + 
+  geom_jitter(data = penguins, aes(x = species, y = body_mass_g))
+
+ggplot(data = penguins) + 
+  geom_boxplot(aes(x = species, y = body_mass_g))
+```
+
+
+## 5.2.¿En qué especie hembras y machos tienen un tamaño similar?
+```{r}
+ggplot(data = penguins) + 
+  geom_violin(aes(x = species, y = body_mass_g, fill = sex), draw_quantiles = 0.5)
+```
+
+
+La especie Chinsrap tiene un tamaño más parecido entre machos y hembras
+
+## Citas bibliográficas
+```{r}
+citation("palmerpenguins")
+citation("tidyverse")
+```
+
+```{r}
+
+```
+
